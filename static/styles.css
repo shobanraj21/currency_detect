@@ -1,0 +1,49 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: black; /* fallback if image fails */
+  background-size: cover;
+  background-position: center;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  width: auto;
+  max-width: 90%;
+  height: auto;
+  margin-bottom: 30px;
+}
+
+.scan-button {
+  width: 6cm;
+  height: 3cm;
+  background-color: #007bff;
+  color: white;
+  font-size: 1.5em;
+  font-weight: bold;
+  text-align: center;
+  line-height: 3cm;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+#result {
+  margin-top: 20px;
+  font-size: 1.5em;
+  color: white;
+  font-weight: bold;
+  text-shadow: 1px 1px 4px #000;
+}
+
+  

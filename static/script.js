@@ -9,6 +9,18 @@ function handleClick(event) {
   runModel(isOriginal);
 }
 
+function handleClick2(event) {
+  const button = event.currentTarget;
+  const rect = button.getBoundingClientRect();
+  const clickX = event.clientX - rect.left;
+
+  const halfWidth = rect.width / 2;
+  const isOriginal = clickX < halfWidth;
+
+  runModel(isOriginal);
+}
+
+
 function runModel(isOriginal) {
   const resultDiv = document.getElementById("result");
 

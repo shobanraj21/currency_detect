@@ -1,19 +1,30 @@
-from flask import Flask, request, jsonify ,render_template
+from flask import Flask, request, jsonify ,render_template,session,redirect, url_for
 from ultralytics import YOLO
 from google import genai
 from config import gemini_apikey
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import asyncio
 from threading import Thread
 import time
 import requests
-
+from functools import wraps
+import sqlite3
 
 ESP32_CAM_IP = "http://192.168.0.8/capture"  # Replace <ESP32_IP> with your ESP32 IP
 
 client = genai.Client(api_key=gemini_apikey)
 
 app = Flask(__name__)
+app.secret_key = 'deadbeef'
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('logged_in'):
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 def detect(file):
     model = YOLO("best.pt")
@@ -32,9 +43,53 @@ def detect(file):
 
 #initializing the camera page
 @app.route('/', methods = ['GET'])
+@login_required
 def index():
 
     return render_template('index.html')
+
+def get_db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        hashed_pw = generate_password_hash(password)
+
+        try:
+            conn = get_db()
+            conn.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, hashed_pw))
+            conn.commit()
+            conn.close()
+            return redirect('/login')
+        except sqlite3.IntegrityError:
+            return render_template('register.html', error='Username already exists.')
+
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if username == 'admin' and password == 'password':
+            session['logged_in'] = True
+            return redirect('/')
+        else:
+            return render_template('login.html', error='Invalid credentials')
+
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    session.clear()
+    return redirect('/login')
 
 def get_image():
     try:

@@ -7,6 +7,11 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
 </head>
 <body>
+  <div class="navbar">
+    <a href="{{ url_for('index') }}">Home</a>
+    <a href="{{ url_for('login') }}">Login</a>
+    <a href="{{ url_for('register') }}">Register</a>
+  </div>
   <div class="container">
     <img src="{{ url_for('static', filename='background.jpg')}}" alt="Money Logo" class="logo" />
 
@@ -14,11 +19,11 @@
       Scan
     </div>
     <div id="result"></div>
-    <div class="scan-button" onclick="handleClick2(event)">
+   <div class="scan-button" onclick="handleClick2(event)">
       Scan with gemini
     </div>
     <div id="result"></div>
-  </div>
+  </div>/
   
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>

@@ -49,7 +49,7 @@ def index():
     return render_template('index.html')
 
 def get_db():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect('users.db')
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -107,6 +107,7 @@ def get_image():
         print(f"An error occurred: {e}")
 
 @app.route('/detect', methods = ['POST' ,'GET'])
+@login_required
 def detect_currency(): 
 
     thread = Thread(target=get_image)

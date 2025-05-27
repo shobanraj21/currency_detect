@@ -74,11 +74,16 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
+        username = request.form['username']
+        password = request.form['password']
 
-        if username == 'admin' and password == 'password':
+        conn = get_db()
+        user = conn.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
+        conn.close()
+
+        if user and check_password_hash(user['password'], password):
             session['logged_in'] = True
+            session['username'] = username
             return redirect('/')
         else:
             return render_template('login.html', error='Invalid credentials')
